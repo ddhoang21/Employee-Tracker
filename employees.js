@@ -138,6 +138,7 @@ const addEmployee = () => {
         }, (err, res) => {
             if (err) throw err;
             console.log("The employee has been added\n");
+            console.table(res);
             initPrompt();
         })
     })
@@ -171,6 +172,7 @@ const addRole = () => {
         }, (err, res) => {
             if (err) throw err;
             console.log("The role has been added\n");
+            console.table(res);
             initPrompt();
         })
     })
@@ -192,6 +194,7 @@ const addDepartment = () => {
         }, (err, res) => {
             if (err) throw err;
             console.log("The department has been added\n");
+            console.table(res);
             initPrompt();
         })
     })
