@@ -31,6 +31,7 @@ const initPrompt = () => {
             "Add Role",
             "Add Department",
             "Update Employee Role",
+            "Update Employee Manager",
             // "Remove Employee",
             // "Remove Role",
             // "Remove Department",
@@ -59,6 +60,9 @@ const initPrompt = () => {
                 break;
             case "Update Employee Role":
                 updateRole();
+                break;
+            case "Update Employee Manager":
+                updateManager();
                 break;
             // case "Remove Employee":
             //     break;
@@ -212,18 +216,49 @@ const updateRole = () => {
         const employeeID = res.employeeID;
         inquirer.prompt([
             {
-                name: "updateRole",
+                name: "newRole",
                 type: "input",
                 message: "What is the role ID you would like to update to?"
             }
         ])
         .then(res => {
-            const updateRoleID = res.updateRole;
+            const newRoleID = res.newRole;
             const query = "UPDATE employee SET role_id=? WHERE id=?";
-            connection.query(query, [updateRoleID, employeeID
+            connection.query(query, [newRoleID, employeeID
             ], (err, res) => {
                 if (err) throw err;
                 console.log("The role has been updated\n");
+                console.table(res);
+                initPrompt();
+            }
+        )})
+    })
+}
+
+const updateManager = () => {
+    inquirer.prompt([
+        {
+            name: "employeeID",
+            type: "input",
+            message: "What is the employee's ID you would like to update manager to?"
+        }
+    ])
+    .then(res => {
+        const employeeID = res.employeeID;
+        inquirer.prompt([
+            {
+                name: "newManager",
+                type: "input",
+                message: "What is the manager's ID you would like to update to?"
+            }
+        ])
+        .then(res => {
+            const newManagerID = res.newManager;
+            const query = "UPDATE employee SET manager_id=? WHERE id=?";
+            connection.query(query, [newManagerID, employeeID
+            ], (err, res) => {
+                if (err) throw err;
+                console.log("The manager has been updated\n");
                 console.table(res);
                 initPrompt();
             }
