@@ -26,7 +26,7 @@ const initPrompt = () => {
             "View All Employees",
             "View All Roles",
             "View All Departments",
-            // "View All Employees by Department",
+            "View All Employees by Manager",
             "Add Employee",
             "Add Role",
             "Add Department",
@@ -48,6 +48,9 @@ const initPrompt = () => {
                 break;
             case "View All Departments":
                 viewDepartments();
+                break;
+            case "View All Employees by Manager":
+                viewEmployeesByManager();
                 break;
             case "Add Employee":
                 addEmployee();
@@ -80,6 +83,25 @@ const initPrompt = () => {
     });
 }
 
+const viewEmployeesByManager = () => {
+    inquirer.prompt([
+        {
+            name: "managerID",
+            type: "input",
+            message: "Which manager ID would you like to view employees of?"
+        }
+    ])
+    .then(res => {
+        const query = "SELECT * FROM employee WHERE ?";
+        connection.query(query, { manager_id: res.managerID }, (err, res) => {
+            if (err) throw err;
+            console.log("All employees from the manager have been retrieved\n");
+            console.table(res);
+            initPrompt();
+        });
+    });
+}
+
 const viewEmployees = () => {
     const query = "SELECT * FROM employee";
     connection.query(query, (err, res) => {
@@ -87,7 +109,7 @@ const viewEmployees = () => {
         console.log("All employees have been retrieved\n");
         console.table(res);
         initPrompt();
-    })
+    });
 }
 
 const viewRoles = () => {
@@ -97,7 +119,7 @@ const viewRoles = () => {
         console.log("All roles have been retrieved\n");
         console.table(res);
         initPrompt();
-    })
+    });
 }
 
 const viewDepartments = () => {
@@ -107,7 +129,7 @@ const viewDepartments = () => {
         console.log("All departments have been retrieved\n");
         console.table(res);
         initPrompt();
-    })
+    });
 }
 
 const addEmployee = () => {
@@ -146,8 +168,7 @@ const addEmployee = () => {
                 console.log("The employee has been added\n");
                 console.table(res);
                 initPrompt();
-            }
-            )
+            })
         } else {
             connection.query(query, 
             {
@@ -161,9 +182,9 @@ const addEmployee = () => {
                 console.log("The employee has been added\n");
                 console.table(res);
                 initPrompt();
-            })
-        }
-    })
+            });
+        };
+    });
 }
 
 const addRole = () => {
@@ -196,8 +217,8 @@ const addRole = () => {
             console.log("The role has been added\n");
             console.table(res);
             initPrompt();
-        })
-    })
+        });
+    });
 }
 
 const addDepartment = () => {
@@ -210,16 +231,13 @@ const addDepartment = () => {
     ])
     .then(res => {
         const query = "INSERT INTO department SET ?";
-        connection.query(query, 
-        {
-            name: res.departmentName
-        }, (err, res) => {
+        connection.query(query, { name: res.departmentName }, (err, res) => {
             if (err) throw err;
             console.log("The department has been added\n");
             console.table(res);
             initPrompt();
-        })
-    })
+        });
+    });
 }
 
 const updateRole = () => {
@@ -227,7 +245,7 @@ const updateRole = () => {
         {
             name: "employeeID",
             type: "input",
-            message: "What is the employee's ID you would like to update role to?"
+            message: "Which employee ID would you like to update role to?"
         }
     ])
     .then(res => {
@@ -236,21 +254,20 @@ const updateRole = () => {
             {
                 name: "newRole",
                 type: "input",
-                message: "What is the role ID you would like to update to?"
+                message: "Which role ID would you like to update to?"
             }
         ])
         .then(res => {
             const newRoleID = res.newRole;
             const query = "UPDATE employee SET role_id=? WHERE id=?";
-            connection.query(query, [newRoleID, employeeID
-            ], (err, res) => {
+            connection.query(query, [newRoleID, employeeID], (err, res) => {
                 if (err) throw err;
                 console.log("The role has been updated\n");
                 console.table(res);
                 initPrompt();
-            }
-        )})
-    })
+            });
+        });
+    });
 }
 
 const updateManager = () => {
@@ -258,7 +275,7 @@ const updateManager = () => {
         {
             name: "employeeID",
             type: "input",
-            message: "What is the employee's ID you would like to update manager to?"
+            message: "Which employee ID would you like to update manager to?"
         }
     ])
     .then(res => {
@@ -267,21 +284,20 @@ const updateManager = () => {
             {
                 name: "newManager",
                 type: "input",
-                message: "What is the manager's ID you would like to update to?"
+                message: "Which manager ID would you like to update to?"
             }
         ])
         .then(res => {
             const newManagerID = res.newManager;
             const query = "UPDATE employee SET manager_id=? WHERE id=?";
-            connection.query(query, [newManagerID, employeeID
-            ], (err, res) => {
+            connection.query(query, [newManagerID, employeeID], (err, res) => {
                 if (err) throw err;
                 console.log("The manager has been updated\n");
                 console.table(res);
                 initPrompt();
-            }
-        )})
-    })
+            });
+        });
+    });
 }
 
 const removeEmployee = () => {
@@ -294,17 +310,13 @@ const removeEmployee = () => {
     ])
     .then(res => {
         const query = "DELETE FROM employee WHERE ?";
-        connection.query(query, 
-            {
-                id: res.employeeID
-            }, (err, res) => {
-                if (err) throw err;
-                console.log("The employee has been removed\n");
-                console.table(res);
-                initPrompt();
-            }
-        )
-    })
+        connection.query(query, { id: res.employeeID }, (err, res) => {
+            if (err) throw err;
+            console.log("The employee has been removed\n");
+            console.table(res);
+            initPrompt();
+        });
+    });
 }
 
 const removeRole = () => {
@@ -317,17 +329,13 @@ const removeRole = () => {
     ])
     .then(res => {
         const query = "DELETE FROM role WHERE ?";
-        connection.query(query,
-            {
-                id: res.roleID
-            }, (err, res) => {
-                if (err) throw err;
-                console.log("The role has been removed\n");
-                console.table(res);
-                initPrompt();
-            }
-        )
-    })
+        connection.query(query, { id: res.roleID }, (err, res) => {
+            if (err) throw err;
+            console.log("The role has been removed\n");
+            console.table(res);
+            initPrompt();
+        });
+    });
 }
 
 const removeDepartment = () => {
@@ -340,15 +348,11 @@ const removeDepartment = () => {
     ])
     .then(res => {
         const query = "DELETE FROM department WHERE ?";
-        connection.query(query,
-            {
-                id:res.departmentID
-            }, (err, res) => {
-                if (err) throw err;
-                console.log("The department has been removed\n");
-                console.table(res);
-                initPrompt();
-            }
-        )
-    })
+        connection.query(query, { id:res.departmentID }, (err, res) => {
+            if (err) throw err;
+            console.log("The department has been removed\n");
+            console.table(res);
+            initPrompt();
+        });
+    });
 }
