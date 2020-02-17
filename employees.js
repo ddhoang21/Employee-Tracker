@@ -134,20 +134,35 @@ const addEmployee = () => {
         }
     ])
     .then(res => {
-        const query = "INSERT INTO employee SET ?"
-        connection.query(query, 
-        {
-            first_name: res.firstName,
-            last_name: res.lastName,
-            role_id: res.roleID,
-            manager_id: res.managerID
+        const query = "INSERT INTO employee SET ?";
+        if (res.managerID === "") {
+            connection.query(query, 
+            {
+                first_name: res.firstName,
+                last_name: res.lastName,
+                role_id: res.roleID
+            }, (err, res) => {
+                if (err) throw err;
+                console.log("The employee has been added\n");
+                console.table(res);
+                initPrompt();
+            }
+            )
+        } else {
+            connection.query(query, 
+            {
+                first_name: res.firstName,
+                last_name: res.lastName,
+                role_id: res.roleID,
+                manager_id: res.managerID
 
-        }, (err, res) => {
-            if (err) throw err;
-            console.log("The employee has been added\n");
-            console.table(res);
-            initPrompt();
-        })
+            }, (err, res) => {
+                if (err) throw err;
+                console.log("The employee has been added\n");
+                console.table(res);
+                initPrompt();
+            })
+        }
     })
 }
 
@@ -170,7 +185,7 @@ const addRole = () => {
         }
     ])
     .then(res => {
-        const query = "INSERT INTO role SET ?"
+        const query = "INSERT INTO role SET ?";
         connection.query(query, 
         {
             title: res.title,
@@ -194,7 +209,7 @@ const addDepartment = () => {
         }
     ])
     .then(res => {
-        const query = "INSERT INTO department SET ?"
+        const query = "INSERT INTO department SET ?";
         connection.query(query, 
         {
             name: res.departmentName
