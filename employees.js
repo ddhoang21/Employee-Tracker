@@ -32,7 +32,7 @@ const initPrompt = () => {
             "Add Department",
             "Update Employee Role",
             "Update Employee Manager",
-            // "Remove Employee",
+            "Remove Employee",
             // "Remove Role",
             // "Remove Department",
             "Exit"
@@ -64,8 +64,9 @@ const initPrompt = () => {
             case "Update Employee Manager":
                 updateManager();
                 break;
-            // case "Remove Employee":
-            //     break;
+            case "Remove Employee":
+                removeEmployee();
+                break;
             // case "Remove Role":
             //     break;
             // case "Remove Department":
@@ -263,5 +264,28 @@ const updateManager = () => {
                 initPrompt();
             }
         )})
+    })
+}
+
+const removeEmployee = () => {
+    inquirer.prompt([
+        {
+            name: "employeeID",
+            type: "input",
+            message: "What is the employee's ID you would like to remove?"
+        }
+    ])
+    .then(res => {
+        const query = "DELETE FROM employee WHERE ?";
+        connection.query(query, 
+            {
+                id: res.employeeID
+            }, (err, res) => {
+                if (err) throw err;
+                console.log("The employee has been removed\n");
+                console.table(res);
+                initPrompt();
+            }
+        )
     })
 }
