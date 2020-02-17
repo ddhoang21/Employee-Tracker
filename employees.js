@@ -74,28 +74,125 @@ const initPrompt = () => {
 }
 
 const viewEmployees = () => {
-    const query = "SELECT first_name, last_name, id FROM employee";
+    const query = "SELECT * FROM employee";
     connection.query(query, (err, res) => {
         if (err) throw err;
+        console.log("All employees have been retrieved\n");
         console.table(res);
         initPrompt();
     })
 }
 
 const viewRoles = () => {
-    const query = "SELECT title, salary FROM role";
+    const query = "SELECT * FROM role";
     connection.query(query, (err, res) => {
         if (err) throw err;
+        console.log("All roles have been retrieved\n");
         console.table(res);
         initPrompt();
     })
 }
 
 const viewDepartments = () => {
-    const query = "SELECT name FROM department";
+    const query = "SELECT * FROM department";
     connection.query(query, (err, res) => {
         if (err) throw err;
+        console.log("All departments have been retrieved\n");
         console.table(res);
         initPrompt();
+    })
+}
+
+const addEmployee = () => {
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "roleID",
+            type: "input",
+            message: "What is the employee's role ID?",
+        },
+        {
+            name: "managerID",
+            type: "input",
+            message: "What is the employee's manager ID?"
+        }
+    ])
+    .then(res => {
+        const query = "INSERT INTO employee SET ?"
+        connection.query(query, 
+        {
+            first_name: res.firstName,
+            last_name: res.lastName,
+            role_id: res.roleID,
+            manager_id: res.managerID
+
+        }, (err, res) => {
+            if (err) throw err;
+            console.log("The employee has been added\n");
+            initPrompt();
+        })
+    })
+}
+
+const addRole = () => {
+    inquirer.prompt([
+        {
+            name: "title",
+            type: "input",
+            message: "What is the role's title?"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "What is the role's salary?"
+        },
+        {
+            name: "departmentID",
+            type: "input",
+            message: "What is the role's department ID?",
+        }
+    ])
+    .then(res => {
+        const query = "INSERT INTO role SET ?"
+        connection.query(query, 
+        {
+            title: res.title,
+            salary: res.salary,
+            department_id: res.departmentID
+        }, (err, res) => {
+            if (err) throw err;
+            console.log("The role has been added\n");
+            initPrompt();
+        })
+    })
+}
+
+const addDepartment = () => {
+    inquirer.prompt([
+        {
+            name: "departmentName",
+            type: "input",
+            message: "What is the department's name?"
+        }
+    ])
+    .then(res => {
+        const query = "INSERT INTO department SET ?"
+        connection.query(query, 
+        {
+            name: res.departmentName
+        }, (err, res) => {
+            if (err) throw err;
+            console.log("The department has been added\n");
+            initPrompt();
+        })
     })
 }
