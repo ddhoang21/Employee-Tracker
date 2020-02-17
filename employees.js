@@ -314,3 +314,26 @@ const removeRole = () => {
         )
     })
 }
+
+const removeDepartment = () => {
+    inquirer.prompt([
+        {
+            name: "departmentID",
+            type: "input",
+            message: "Which department ID would you like to remove?"
+        }
+    ])
+    .then(res => {
+        const query = "DELETE FROM department WHERE ?";
+        connection.query(query,
+            {
+                id:res.departmentID
+            }, (err, res) => {
+                if (err) throw err;
+                console.log("The department has been removed\n");
+                console.table(res);
+                initPrompt();
+            }
+        )
+    })
+}
