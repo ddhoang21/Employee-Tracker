@@ -199,3 +199,34 @@ const addDepartment = () => {
         })
     })
 }
+
+const updateRole = () => {
+    inquirer.prompt([
+        {
+            name: "employeeID",
+            type: "input",
+            message: "What is the employee's ID you would like to update role to?"
+        }
+    ])
+    .then(res => {
+        const employeeID = res.employeeID;
+        inquirer.prompt([
+            {
+                name: "updateRole",
+                type: "input",
+                message: "What is the role ID you would like to update to?"
+            }
+        ])
+        .then(res => {
+            const updateRoleID = res.updateRole;
+            const query = "UPDATE employee SET role_id=? WHERE id=?";
+            connection.query(query, [updateRoleID, employeeID
+            ], (err, res) => {
+                if (err) throw err;
+                console.log("The role has been updated\n");
+                console.table(res);
+                initPrompt();
+            }
+        )})
+    })
+}
