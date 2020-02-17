@@ -33,8 +33,8 @@ const initPrompt = () => {
             "Update Employee Role",
             "Update Employee Manager",
             "Remove Employee",
-            // "Remove Role",
-            // "Remove Department",
+            "Remove Role",
+            "Remove Department",
             "Exit"
         ]
     })
@@ -67,10 +67,12 @@ const initPrompt = () => {
             case "Remove Employee":
                 removeEmployee();
                 break;
-            // case "Remove Role":
-            //     break;
-            // case "Remove Department":
-            //     break;
+            case "Remove Role":
+                removeRole();
+                break;
+            case "Remove Department":
+                removeDepartment();
+                break;
             case "Exit":
                 connection.end();
                 break;
@@ -272,7 +274,7 @@ const removeEmployee = () => {
         {
             name: "employeeID",
             type: "input",
-            message: "What is the employee's ID you would like to remove?"
+            message: "Which employee ID would you like to remove?"
         }
     ])
     .then(res => {
@@ -283,6 +285,29 @@ const removeEmployee = () => {
             }, (err, res) => {
                 if (err) throw err;
                 console.log("The employee has been removed\n");
+                console.table(res);
+                initPrompt();
+            }
+        )
+    })
+}
+
+const removeRole = () => {
+    inquirer.prompt([
+        {
+            name: "roleID",
+            type: "input",
+            message: "Which role ID would you like to remove?"
+        }
+    ])
+    .then(res => {
+        const query = "DELETE FROM role WHERE ?";
+        connection.query(query,
+            {
+                id: res.roleID
+            }, (err, res) => {
+                if (err) throw err;
+                console.log("The role has been removed\n");
                 console.table(res);
                 initPrompt();
             }
