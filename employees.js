@@ -24,9 +24,9 @@ const initPrompt = () => {
         message: "What would you like to do?",
         choices: [
             "View All Employees",
+            "View All Employees by Manager",
             "View All Roles",
             "View All Departments",
-            "View All Employees by Manager",
             "Add Employee",
             "Add Role",
             "Add Department",
@@ -43,14 +43,14 @@ const initPrompt = () => {
             case "View All Employees":
                 viewEmployees();
                 break;
+            case "View All Employees by Manager":
+                viewEmployeesByManager();
+                break;
             case "View All Roles":
                 viewRoles();
                 break;
             case "View All Departments":
                 viewDepartments();
-                break;
-            case "View All Employees by Manager":
-                viewEmployeesByManager();
                 break;
             case "Add Employee":
                 addEmployee();
@@ -157,33 +157,27 @@ const addEmployee = () => {
     ])
     .then(res => {
         const query = "INSERT INTO employee SET ?";
-        if (res.managerID === "") {
-            connection.query(query, 
-            {
-                first_name: res.firstName,
-                last_name: res.lastName,
-                role_id: res.roleID
-            }, (err, res) => {
-                if (err) throw err;
-                console.log("The employee has been added\n");
-                console.table(res);
-                initPrompt();
-            })
-        } else {
-            connection.query(query, 
-            {
+        let userInput = {};
+        if (res.managerID) {
+            userInput = {
                 first_name: res.firstName,
                 last_name: res.lastName,
                 role_id: res.roleID,
                 manager_id: res.managerID
-
-            }, (err, res) => {
-                if (err) throw err;
-                console.log("The employee has been added\n");
-                console.table(res);
-                initPrompt();
-            });
+            }
+        } else {
+            userInput = {
+                first_name: res.firstName,
+                last_name: res.lastName,
+                role_id: res.roleID
+            }
         };
+        connection.query(query, userInput , (err, res) => {
+            if (err) throw err;
+            console.log("The employee has been added\n");
+            console.table(res);
+            initPrompt();
+        });
     });
 }
 
