@@ -27,6 +27,7 @@ const initPrompt = () => {
             "View All Employees by Manager",
             "View All Roles",
             "View All Departments",
+            "View Total Budget by Department",
             "Add Employee",
             "Add Role",
             "Add Department",
@@ -51,6 +52,9 @@ const initPrompt = () => {
                 break;
             case "View All Departments":
                 viewDepartments();
+                break;
+            case "View Total Budget by Department":
+                viewTotalBudgetByDepartment();
                 break;
             case "Add Employee":
                 addEmployee();
@@ -80,6 +84,25 @@ const initPrompt = () => {
                 connection.end();
                 break;
         }
+    });
+}
+
+const viewTotalBudgetByDepartment = () => {
+    inquirer.prompt([
+        {
+            name: "departmentID",
+            type: "input",
+            message: "Which department ID would you like to view the total budget of?"
+        }
+    ])
+    .then(res => {
+        const query = "SELECT salary FROM role WHERE ?";
+        connection.query(query, { department_id: res.departmentID }, (err, res) => {
+            if (err) throw err;
+            console.log("The total budget from the department has been retrieved\n");
+            console.table(res);
+            initPrompt();
+        });
     });
 }
 
